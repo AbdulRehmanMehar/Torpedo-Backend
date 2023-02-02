@@ -15,7 +15,7 @@ export class Payment extends Model {
   id: string;
 
   @Column
-  paymentType: string;
+  paymentType: 'Debt' | 'Credit' | 'Cash';
 
   @Column
   amount: number;
