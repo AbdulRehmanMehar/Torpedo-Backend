@@ -3,36 +3,48 @@ import { Tenant } from './tenant.model';
 
 @Table({
   timestamps: true,
-  tableName: 'products'
+  tableName: 'products',
 })
 export class Product extends Model {
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 
   @Column
   name: string;
 
-  @Column
+  @Column({
+    type: DataType.DOUBLE
+  })
   price: number; // purchase price
 
-  @IsNull
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+    allowNull: true,
+  })
   width: number; // in meters
 
-  @IsNull
-  @Column
+  @Column({
+    type: DataType.DOUBLE,
+    allowNull: true,
+  })
   height: number; // in meters
 
   @ForeignKey(() => Tenant)
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    references: {
+      model: 'tenants',
+      key: 'id',
+    }
   })
   tenantId: string;
 
-  @HasOne(() => Tenant, 'tenantId')
+  @BelongsTo(() => Tenant, 'tenantId')
   tenant: Tenant;
 
 }

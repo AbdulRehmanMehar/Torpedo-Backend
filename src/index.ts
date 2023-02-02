@@ -6,7 +6,7 @@ import { sequelize } from './config/db';
 import { createExpressServer, Action } from 'routing-controllers';
 const { createLogger, format, transports } = require('winston');
 
-import { IndexController, InvoicesController } from './controllers';
+import { IndexController, InvoicesController, ProductsController } from './controllers';
 import { BodyParserMiddleware, CORsMiddleware, HelmetMiddleware, MorganMiddleware } from './middlewares';
 
 
@@ -28,7 +28,7 @@ const app = createExpressServer({
    }
   },
   middlewares: [HelmetMiddleware, CORsMiddleware, MorganMiddleware, BodyParserMiddleware],
-  controllers: [IndexController, InvoicesController]
+  controllers: [IndexController, InvoicesController, ProductsController]
 });
 app.listen(port, async () => {
   logger.log(

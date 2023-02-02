@@ -10,7 +10,9 @@ export class ProductsController {
   @Get('/')
   async getProducts(@Req() request: any, @Res() response: Response) {
     try {
-      const products = await Product.findAll();
+      const products = await Product.findAll({
+        attributes: ['id', 'name', 'price', 'width', 'height']
+      });
 
       return response.json({
         products
@@ -27,7 +29,13 @@ export class ProductsController {
   async addProduct(@Body() productData: any, @Res() response: Response) {
     try {
 
+      console.log({ productData });
+      
+
       const { value, error } = productSchema.validate(productData);
+
+      console.log({ value });
+      
 
       if (error) return response.status(400).json({ error });
 
@@ -42,13 +50,16 @@ export class ProductsController {
         name,
         price,
         width,
-        height
+        height,
+        tenantId: null
       });
 
       return response.status(200).json({
         product
       });
     } catch (error) {
+      console.log(error);
+      
       return response.status(500).json({
         message: 'Something went wrong',
         error
