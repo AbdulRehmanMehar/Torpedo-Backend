@@ -6,12 +6,13 @@ import { Payment } from './payments.modal';
 import { Tenant } from './tenant.model';
 import { Address } from './address.model';
 import { Customer } from './customer.model';
+import { Product } from './product.model';
 import { InvoiceItem } from './invoice-items.model';
 
-sequelize.addModels([Tenant, Invoice, Payment, Address, Customer, InvoiceItem]);
+sequelize.addModels([Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product]);
 
 
-export { Sequelize, sequelize, Tenant, Invoice, Payment, Address, Customer, InvoiceItem };
+export { Sequelize, sequelize, Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product };
 
 
 

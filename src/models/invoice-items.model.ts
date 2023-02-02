@@ -28,10 +28,10 @@ export class InvoiceItem extends Model {
   @Column
   price: string; // sell price
 
-  @HasOne(() => Product)
+  @HasOne(() => Product, 'productId')
   product: Product;
 
-  @HasOne(() => Tenant)
+  @HasOne(() => Tenant, 'tenantId')
   tenant: Tenant;
 
 }

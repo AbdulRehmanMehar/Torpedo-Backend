@@ -18,12 +18,12 @@ export class Product extends Model {
   @Column
   price: number; // purchase price
 
-  @Column
   @IsNull
+  @Column
   width: number; // in meters
 
-  @Column
   @IsNull
+  @Column
   height: number; // in meters
 
   @ForeignKey(() => Tenant)
@@ -32,7 +32,7 @@ export class Product extends Model {
   })
   tenantId: string;
 
-  @HasOne(() => Tenant)
+  @HasOne(() => Tenant, 'tenantId')
   tenant: Tenant;
 
 }

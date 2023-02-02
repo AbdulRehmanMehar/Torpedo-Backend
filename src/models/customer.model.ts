@@ -16,8 +16,8 @@ export class Customer extends Model {
   @Column
   name: string;
 
-  @Column
   @Unique
+  @Column
   phone: string;
 
   @ForeignKey(() => Tenant)
@@ -26,7 +26,7 @@ export class Customer extends Model {
   })
   tenantId: string;
 
-  @HasOne(() => Tenant)
+  @HasOne(() => Tenant, 'tenantId')
   tenant: Tenant;
 
   @HasMany(() => Address)

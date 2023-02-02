@@ -1,4 +1,4 @@
-import { Table, Column, Model, HasMany, DataType, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, HasMany, DataType, PrimaryKey, BelongsTo } from 'sequelize-typescript';
 import { Invoice } from './invoice.model';
 import { Payment } from './payments.modal';
 
@@ -16,10 +16,4 @@ export class Tenant extends Model {
 
   @Column
   name: string;
-
-  @HasMany(() => Invoice)
-  invoices: Invoice[];
-
-  @HasMany(() => Payment)
-  payments: Payment[];
 }
