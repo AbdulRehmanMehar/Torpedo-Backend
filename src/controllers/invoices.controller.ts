@@ -1,9 +1,10 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
 import { Invoice, Payment } from '../models';
-import { Body, Controller, Get, Post, Req, Res } from 'routing-controllers';
+import { Body, Controller, Get, Middleware, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { invoiceSchema } from '../validators';
-
+import { Auth0Middleware } from '../middlewares/auth0.middleware';
+@UseBefore(Auth0Middleware)
 @Controller('/invoices')
 export class InvoicesController {
 

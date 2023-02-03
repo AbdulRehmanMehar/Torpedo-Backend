@@ -7,12 +7,13 @@ import { Tenant } from './tenant.model';
 import { Address } from './address.model';
 import { Customer } from './customer.model';
 import { Product } from './product.model';
+import { User } from './user.model';
 import { InvoiceItem } from './invoice-items.model';
 
-sequelize.addModels([Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product]);
+sequelize.addModels([Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product, User]);
 
 
-export { Sequelize, sequelize, Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product };
+export { Sequelize, sequelize, Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product, User };
 
 
 

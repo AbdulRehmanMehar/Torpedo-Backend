@@ -1,9 +1,11 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
 import { Invoice, Payment, Product } from '../models';
-import { Body, Controller, Get, Post, Req, Res } from 'routing-controllers';
+import { Body, Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { productSchema } from '../validators';
+import { Auth0Middleware } from '../middlewares/auth0.middleware';
 
+@UseBefore(Auth0Middleware)
 @Controller('/products')
 export class ProductsController {
 
@@ -30,12 +32,12 @@ export class ProductsController {
     try {
 
       console.log({ productData });
-      
+
 
       const { value, error } = productSchema.validate(productData);
 
       console.log({ value });
-      
+
 
       if (error) return response.status(400).json({ error });
 
@@ -59,7 +61,7 @@ export class ProductsController {
       });
     } catch (error) {
       console.log(error);
-      
+
       return response.status(500).json({
         message: 'Something went wrong',
         error
