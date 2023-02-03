@@ -79,11 +79,9 @@ export const createAdmin = async (userInfo: Auth0User) => {
 }
 
 export const updateUser = async (userInfo: Auth0User) => {
-
   const user = (await managementClient.getUsersByEmail(userInfo.email))[0];
 
   if (!user || (user || {}).email !== userInfo.email) throw new Error('Something went wrong.');
-
 
   return managementClient.updateUser({
     id: user.user_id,
@@ -100,23 +98,6 @@ export const generateToken = async (userInfo: Omit<Auth0User, 'name'>) => {
     password: userInfo.password
   });
 }
-
-const auth0 = async (req: any, res: any, next: any) => {
-  if (!req.auth || !(req.auth || {}).payload || !((req.auth || {}).payload || {}).sub)
-    next(new Error('Token validation failed'));
-
-  const userId = req.auth.payload.sub;
-
-  const userInfo = await managementClient.getUser({
-    id: userId
-  });  
-  
-  req.auth.currentUser = userInfo;
-
-  console.log(req.auth.currentUser);
-
-  next();
-}; 
 
 export const getUserById = async (id: string) => {
   return managementClient.getUser({ id });  
