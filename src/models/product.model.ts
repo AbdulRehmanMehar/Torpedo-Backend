@@ -44,7 +44,7 @@ export class Product extends Model {
   })
   tenantId: string;
 
-  @BelongsTo(() => Tenant, 'tenantId')
+  @BelongsTo(() => Tenant, 'id')
   tenant: Tenant;
 
 }

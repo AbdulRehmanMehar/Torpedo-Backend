@@ -3,12 +3,14 @@ import { v4 as uuidV4 } from 'uuid';
 import { Invoice } from '../models';
 import { Body, Controller, Get, Post, Req, Res } from 'routing-controllers';
 import { generateToken } from '../config/auth0';
+import { connectToDatabase } from '../config/db';
 
 @Controller()
 export class IndexController {
 
   @Get('/')
   async getApi(@Req() request: any, @Res() response: Response) {
+    const { sequelize } = await connectToDatabase('admin');
     return response.send('Application is live...');
   }
 

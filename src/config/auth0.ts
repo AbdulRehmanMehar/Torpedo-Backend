@@ -1,6 +1,6 @@
-
 import { auth } from 'express-oauth2-jwt-bearer';
 import { ManagementClient, AuthenticationClient } from 'auth0';
+import { generateEncryptionKey } from './cryptr';
 
 const {
   AUTH0_DOMAIN,
@@ -14,6 +14,8 @@ const {
   AUTH0_MANAGEMENT_CLIENT_ID,
   AUTH0_MANAGEMENT_CLIENT_SECRET,
 } = process.env;
+
+
 
 export const managementClient = new ManagementClient({
   domain: AUTH0_DOMAIN,
@@ -38,21 +40,13 @@ export const authClient = new AuthenticationClient({
   //   cacheTTLInSeconds: 10
   // }
 });
-
-
-const jwtCheck = auth({
-  audience: AUTH0_AUDIENCE,
-  issuerBaseURL: AUTH0_ISSUER_BASE_URL,
-  tokenSigningAlg: AUTH0_TOKEN_SIGNING_ALGO
-});
-
-
 export interface Auth0User {
   id?: string;
   name: string;
   email: string;
   password: string;
   tenantId?: string;
+  encKey?: string;
 }
 
 export const createUser = async (userInfo: Auth0User) => {
@@ -73,12 +67,13 @@ export const createAdmin = async (userInfo: Auth0User) => {
     password: userInfo.password,
     connection: AUTH0_CONNECTION,
     user_metadata: {
-      userId: userInfo.id
+      userId: userInfo.id,
+      encKey: generateEncryptionKey(userInfo.id)
     }
   });
 }
 
-export const updateUser = async (userInfo: Auth0User) => {
+export const updateUserMeta = async (userInfo: { email: string, tenantId: string }) => {
   const user = (await managementClient.getUsersByEmail(userInfo.email))[0];
 
   if (!user || (user || {}).email !== userInfo.email) throw new Error('Something went wrong.');
@@ -86,9 +81,10 @@ export const updateUser = async (userInfo: Auth0User) => {
   return managementClient.updateUser({
     id: user.user_id,
   }, {
-    name: userInfo.name,
-    email: userInfo.email,
     connection: AUTH0_CONNECTION,
+    user_metadata: {
+      tenantId: userInfo.tenantId
+    }
   });
 }
 
@@ -100,7 +96,13 @@ export const generateToken = async (userInfo: Omit<Auth0User, 'name'>) => {
 }
 
 export const getUserById = async (id: string) => {
-  return managementClient.getUser({ id });  
+  return managementClient.getUser({ id });
 }
+
+const jwtCheck = auth({
+  audience: AUTH0_AUDIENCE,
+  issuerBaseURL: AUTH0_ISSUER_BASE_URL,
+  tokenSigningAlg: AUTH0_TOKEN_SIGNING_ALGO
+});
 
 export default jwtCheck;

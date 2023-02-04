@@ -11,7 +11,8 @@ export class Tenant extends Model {
 
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 

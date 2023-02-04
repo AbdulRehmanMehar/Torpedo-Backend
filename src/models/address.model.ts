@@ -31,7 +31,7 @@ export class Address extends Model {
   })
   tenantId: string;
 
-  @HasOne(() => Tenant, 'tenantId')
+  @HasOne(() => Tenant, 'id')
   tenant: Tenant;
 
 }

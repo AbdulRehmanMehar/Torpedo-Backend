@@ -26,7 +26,7 @@ export class Customer extends Model {
   })
   tenantId: string;
 
-  @HasOne(() => Tenant, 'tenantId')
+  @HasOne(() => Tenant, 'id')
   tenant: Tenant;
 
   @HasMany(() => Address)

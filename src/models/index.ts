@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import { sequelize } from '../config/db';
 import * as config from '../config/config';
 import { Invoice } from './invoice.model';
 import { Payment } from './payments.modal';
@@ -10,10 +9,4 @@ import { Product } from './product.model';
 import { User } from './user.model';
 import { InvoiceItem } from './invoice-items.model';
 
-sequelize.addModels([Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product, User]);
-
-
-export { Sequelize, sequelize, Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product, User };
-
-
-
+export { Tenant, Invoice, Payment, Address, Customer, InvoiceItem, Product, User };

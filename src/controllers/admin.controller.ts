@@ -1,10 +1,10 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
-import { Invoice, Tenant, User } from '../models';
 import { Body, Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
-import auth0, { createAdmin } from '../config/auth0';
+import auth0, { createAdmin, updateUserMeta } from '../config/auth0';
 import { adminSchema, tenantSchema } from '../validators';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
+import { connectToDatabase } from '../config/db';
 
 @Controller('/admin')
 export class AdminController {
@@ -14,6 +14,8 @@ export class AdminController {
     try {
       const { value, error } = adminSchema.validate(userInfo);
       if (error) return response.status(400).json({ error });
+
+      const { User } = await connectToDatabase('admin');
 
       const { name, email, password } = value;
 
@@ -57,17 +59,23 @@ export class AdminController {
   @Post('/create/tenant')
   async createTenant(@Body() tenantInfo: any, @Req() request: Request & {auth: any}, @Res() response: Response) {
     try {
-
-      return response.status(200).json({
-        tenant: request.auth.currentUser
-      });
+      const userEmail = request.auth.currentUser.email;
+      const userId = request.auth.currentUser.user_metadata.userId;
+      console.log(userId);
+      
+      if (!userId)
+        return response.status(400).json({
+          message: 'Something went wrong',
+        });
 
       const { value, error } = tenantSchema.validate(tenantInfo);
       if (error) return response.status(400).json({ error });
 
+      const { Tenant, User } = await connectToDatabase('admin');
       const { name } = value;
 
       let tenant = await Tenant.findOne({
+        attributes: ['name'],
         where: { name }
       });
 
@@ -80,6 +88,17 @@ export class AdminController {
 
       tenant = await Tenant.create({
         name,
+        adminId: userId,
+      }, { returning: ['id'] });
+
+      await updateUserMeta({email: userEmail, tenantId: tenant.id});
+
+      await User.update({
+        tenantId: tenant.id,
+      }, {
+        where: {
+          id: userId
+        }
       });
 
       return response.status(200).json({

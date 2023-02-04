@@ -8,8 +8,10 @@ dotenv.config({
 const {
   DB_HOST,
   DB_NAME,
+  DB_PORT,
   DB_ADMIN_USER,
   DB_ADMIN_PASSWORD,
+  DATABASE_CERTIFICATE
 } = process.env;
 
 const config: any = {
@@ -18,10 +20,12 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
+    port: DB_PORT,
+    dialect: 'postgres',
     dialectOptions: {
       ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: true,
+        ca: DATABASE_CERTIFICATE,
       }
     }
   },
@@ -30,10 +34,12 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
+    port: DB_PORT,
+    dialect: 'postgres',
     dialectOptions: {
       ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: true,
+        ca: DATABASE_CERTIFICATE,
       }
     }
   },
@@ -42,13 +48,15 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
+    port: DB_PORT,
+    dialect: 'postgres',
     dialectOptions: {
       ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: true,
+        ca: DATABASE_CERTIFICATE,
       }
     }
-  }
+  },
 }
 
 const data = JSON.stringify(config);
