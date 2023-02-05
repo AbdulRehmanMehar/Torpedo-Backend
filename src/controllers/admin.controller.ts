@@ -62,7 +62,7 @@ export class AdminController {
       const userEmail = request.auth.currentUser.email;
       const userId = request.auth.currentUser.user_metadata.userId;
       console.log(userId);
-      
+
       if (!userId)
         return response.status(400).json({
           message: 'Something went wrong',
