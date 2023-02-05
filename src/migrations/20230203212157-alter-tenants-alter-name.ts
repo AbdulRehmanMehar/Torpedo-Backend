@@ -3,11 +3,10 @@ import { QueryInterface, DataTypes, QueryTypes, Sequelize } from 'sequelize';
 module.exports = {
   up: (queryInterface: QueryInterface): Promise<void> => queryInterface.sequelize.transaction(
     async (transaction) => {
-      // await queryInterface.removeColumn('tenants', 'name');
-      await queryInterface.addColumn('tenants', 'name', {
+      await queryInterface.changeColumn('tenants', 'name', {
         type: DataTypes.STRING,
         allowNull: false,
-        // unique: true,
+        unique: true,
       });
 
       await queryInterface.removeColumn('tenants', 'indentifier');
@@ -16,11 +15,10 @@ module.exports = {
 
   down: (queryInterface: QueryInterface): Promise<void> => queryInterface.sequelize.transaction(
     async (transaction) => {
-      await queryInterface.removeColumn('tenants', 'name');
-      await queryInterface.addColumn('tenants', 'name', {
+      await queryInterface.changeColumn('tenants', 'name', {
         type: DataTypes.STRING,
         allowNull: false,
-        // unique: false
+        unique: false
       });
 
       await queryInterface.addColumn('tenants', 'indentifier', {

@@ -1,5 +1,5 @@
 # Installs Node.js image
-FROM node:16.13.1-alpine3.14
+FROM node:19-alpine3.16
 
 # sets the working directory for any RUN, CMD, COPY command
 # all files we put in the Docker container running the server will be in /usr/src/app (e.g. /usr/src/app/package.json)
@@ -11,8 +11,10 @@ COPY ["package.json", ".sequelizerc", "nodemon.json", "yarn.lock", "tsconfig.jso
 # Copies everything in the src directory to WORKDIR/src
 COPY ./src ./src
 
+RUN npm i -g yarn
+
 # Installs all packages
-RUN npm install
+RUN yarn
 
 # Runs the dev npm script to build & start the server
-CMD npm run dev
+CMD yarn dev

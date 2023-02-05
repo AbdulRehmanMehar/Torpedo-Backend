@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  torpedo_app:
+    container_name: torpedo_app
+    restart: always
+    build: .
+    ports:
+      - 1337:${PORT}
+    depends_on:
+      - torpedo_db
+    volumes:
+    - .:/usr/src/app
+
+  torpedo_db:
+    container_name: torpedo_db
+    image: postgres
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - data:/data/db
+    environment:
+      - POSTGRES_USER=${DB_ADMIN_USER}
+      - POSTGRES_PASSWORD=${DB_ADMIN_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+
+volumes: 
+ data: {}
