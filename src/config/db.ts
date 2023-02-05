@@ -4,18 +4,15 @@ const {
   DB_HOST,
   DB_NAME,
   DB_USER,
-  DB_PORT,
   DB_PASSWORD,
   DB_ADMIN_USER,
   DB_ADMIN_PASSWORD,
-  DATABASE_CERTIFICATE,
 } = process.env;
 
 const connection: Record<string, Record<'isConnected', boolean>> = {};
 export const connectToDatabase = async (tenantId: string | 'admin') => {
   let sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
     host: DB_HOST,
-    port: parseInt(DB_PORT),
     dialect: 'postgres',
     pool: {
       min: 0,
@@ -26,7 +23,6 @@ export const connectToDatabase = async (tenantId: string | 'admin') => {
   if (tenantId === 'admin') {
     sequelize = new Sequelize(DB_NAME, DB_ADMIN_USER, DB_ADMIN_PASSWORD, {
       host: DB_HOST,
-      port: parseInt(DB_PORT),
       dialect: 'postgres',
       pool: {
         min: 0,

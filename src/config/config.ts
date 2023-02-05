@@ -8,10 +8,8 @@ dotenv.config({
 const {
   DB_HOST,
   DB_NAME,
-  DB_PORT,
   DB_ADMIN_USER,
   DB_ADMIN_PASSWORD,
-  DATABASE_CERTIFICATE
 } = process.env;
 
 const config: any = {
@@ -20,7 +18,6 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    port: DB_PORT,
     dialect: 'postgres',
   },
   test: {
@@ -28,7 +25,6 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    port: DB_PORT,
     dialect: 'postgres',
   },
   production: {
@@ -36,7 +32,6 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    port: DB_PORT,
     dialect: 'postgres',
   },
 }
