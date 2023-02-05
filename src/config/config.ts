@@ -22,12 +22,6 @@ const config: any = {
     host: DB_HOST,
     port: DB_PORT,
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: true,
-        ca: DATABASE_CERTIFICATE,
-      }
-    }
   },
   test: {
     username: DB_ADMIN_USER,
@@ -36,12 +30,6 @@ const config: any = {
     host: DB_HOST,
     port: DB_PORT,
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: true,
-        ca: DATABASE_CERTIFICATE,
-      }
-    }
   },
   production: {
     username: DB_ADMIN_USER,
@@ -50,12 +38,6 @@ const config: any = {
     host: DB_HOST,
     port: DB_PORT,
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: true,
-        ca: DATABASE_CERTIFICATE,
-      }
-    }
   },
 }
 

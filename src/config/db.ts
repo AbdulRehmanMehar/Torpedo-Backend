@@ -17,12 +17,6 @@ export const connectToDatabase = async (tenantId: string | 'admin') => {
     host: DB_HOST,
     port: parseInt(DB_PORT),
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: true,
-        ca: DATABASE_CERTIFICATE
-      },
-    },
     pool: {
       min: 0,
       max: 5,
@@ -34,12 +28,6 @@ export const connectToDatabase = async (tenantId: string | 'admin') => {
       host: DB_HOST,
       port: parseInt(DB_PORT),
       dialect: 'postgres',
-      dialectOptions: {
-        ssl: {
-          rejectUnauthorized: true,
-          ca: DATABASE_CERTIFICATE
-        },
-      },
       pool: {
         min: 0,
         max: 5,
