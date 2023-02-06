@@ -19,7 +19,7 @@ COPY ./src ./src
 RUN npm run build
 
 # Copies everything in the src directory to WORKDIR/src
-COPY ./dist ./dist
+COPY ./dist ./
 # COPY ./node_modules ./node_modules
 
 # Runs the dev npm script to build & start the server
