@@ -12,7 +12,7 @@ RUN npm i -g tslint typescript cpy-cli nodemon sequelize-cli cpy-cli cross-env l
 # Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
 COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "tsconfig.json", ".env", "./"]
 
-RUN NODE_ENV=development npm install --production=false
+RUN NODE_ENV=development npm install
 
 COPY ./src ./src
 
@@ -22,4 +22,4 @@ RUN npm run build
 COPY ./dist ./dist
 
 # Runs the dev npm script to build & start the server
-CMD npm run db:migrate && npm run start
+CMD npm run db:migrate:prod && npm run start
