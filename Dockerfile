@@ -7,12 +7,12 @@ WORKDIR /usr/src/app
 
 RUN npm config set cache /usr/src/app --global
 
-RUN npm i -g tslint typescript cpy-cli nodemon sequelize-cli cpy-cli cross-env lodash
+RUN npm i -g tslint typescript cpy-cli nodemon sequelize-cli cpy-cli cross-env lodash dotenv
 
 # Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
 COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "tsconfig.json", ".env", "./"]
 
-RUN NODE_ENV=development npm install
+RUN npm install
 
 COPY ./src ./src
 
@@ -20,7 +20,7 @@ RUN npm run build
 
 # Copies everything in the src directory to WORKDIR/src
 COPY ./dist ./dist
-COPY ./node_modules ./node_modules
+# COPY ./node_modules ./node_modules
 
 # Runs the dev npm script to build & start the server
 CMD npm run db:migrate:prod && npm run start
