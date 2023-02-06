@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "tsc",
+    "prebuild": "npx tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "npx tsc",
     "db:migrate": "npm run build && node ./dist/config/config.js && cross-env MIGRATION_DIR=\"dist\" NODE_ENV=\"development\" npx sequelize-cli db:migrate",
     "dev": "yarn db:migrate && nodemon",
     "start": "yarn db:migrate && node dist/index.js"
