@@ -5,7 +5,9 @@ FROM node:18.12.1-alpine
 # all files we put in the Docker container running the server will be in /usr/src/app (e.g. /usr/src/app/package.json)
 WORKDIR /usr/src/app
 
-RUN sudo chown -R 1001:1001 "/root/.npm"
+USER root
+
+RUN npm install -g yarn
 
 # Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
 COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "yarn.lock", "tsconfig.json", ".env", "./"]
