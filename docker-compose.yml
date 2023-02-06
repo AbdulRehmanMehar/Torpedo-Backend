@@ -1,18 +1,8 @@
 version: '3.3'
 services:
-  torpedo_app:
-    container_name: torpedo_app
-    restart: always
-    build: .
-    ports:
-      - 1337:${PORT}
-    depends_on:
-      - torpedo_db
-    volumes:
-    - .:/usr/src/app
-
   torpedo_db:
     container_name: torpedo_db
+    hostname: torpedo_db
     image: postgres
     ports:
       - '${DB_PORT}:5432'
@@ -22,6 +12,26 @@ services:
       - POSTGRES_USER=${DB_ADMIN_USER}
       - POSTGRES_PASSWORD=${DB_ADMIN_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", $DB_ADMIN_USER , "-d", $DB_NAME]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  torpedo_app:
+    container_name: torpedo_app
+    hostname: torpedo_app
+    restart: always
+    build: .
+    ports:
+      - 1337:${PORT}
+    depends_on:
+      torpedo_db: 
+        condition: service_healthy
+    volumes:
+    - .:/usr/src/app
+    environment:
+      WAIT_HOSTS: torpedo_db:5432
 
 volumes: 
  data: {}
