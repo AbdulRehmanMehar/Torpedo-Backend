@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "npx tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "npx tsc",
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
     "db:migrate": "npm run build && node ./dist/config/config.js && cross-env MIGRATION_DIR=\"dist\" NODE_ENV=\"development\" npx sequelize-cli db:migrate",
-    "dev": "npx nodemon",
+    "dev": "nodemon",
     "start": "node dist/index.js"
   },
   "author": "Abdul Rehman",
