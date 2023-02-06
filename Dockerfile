@@ -14,6 +14,8 @@ COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "tsconfig.j
 
 RUN NODE_ENV=development npm install --production=false
 
+COPY ./src ./src
+
 RUN npm run build
 
 # Copies everything in the src directory to WORKDIR/src
