@@ -13,6 +13,8 @@ COPY ./src ./src
 
 RUN npm config set cache /usr/src/app --global
 
+RUN yarn global add tslint typescript cpy-cli nodemon sequelize-cli cpy-cli cross-env lodash
+
 # Installs all packages
 RUN NODE_ENV=development yarn
 
