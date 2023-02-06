@@ -7,8 +7,6 @@ WORKDIR /usr/src/app
 
 USER root
 
-RUN npm install -g yarn
-
 # Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
 COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "yarn.lock", "tsconfig.json", ".env", "./"]
 
