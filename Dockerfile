@@ -6,7 +6,7 @@ FROM node:18.12.1-alpine
 WORKDIR /usr/src/app
 
 # Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
-COPY ["tslint.json", "package.json", "yarn.lock", ".sequelizerc", "nodemon.json", "tsconfig.json", ".env", "./"]
+COPY ["tslint.json", "package.json", ".sequelizerc", "nodemon.json", "tsconfig.json", ".env", "./"]
 
 # Copies everything in the src directory to WORKDIR/src
 COPY ./src ./src
