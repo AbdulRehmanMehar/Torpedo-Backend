@@ -9,7 +9,7 @@
     "db:migrate": "npm run build && node ./dist/config/config.js && cross-env MIGRATION_DIR=\"dist\" NODE_ENV=\"development\" npx sequelize-cli db:migrate",
     "db:migrate:prod": "node ./dist/config/config.js && cross-env MIGRATION_DIR=\"dist\" NODE_ENV=\"development\" npx sequelize-cli db:migrate",
     "dev": "nodemon",
-    "start": "node index.js"
+    "start": "npm run db:migrate:prod && node dist/index.js"
   },
   "author": "Abdul Rehman",
   "license": "ISC",
