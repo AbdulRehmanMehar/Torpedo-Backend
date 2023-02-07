@@ -3,15 +3,15 @@ import { Sequelize } from 'sequelize-typescript';
 const {
   DB_HOST,
   DB_NAME,
-  DB_USER,
-  DB_PASSWORD,
+  DB_TENANT_USER,
+  DB_TENANT_PASSWORD,
   DB_ADMIN_USER,
   DB_ADMIN_PASSWORD,
 } = process.env;
 
 const connection: Record<string, Record<'isConnected', boolean>> = {};
 export const connectToDatabase = async (tenantId: string | 'admin') => {
-  let sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+  let sequelize = new Sequelize(DB_NAME, DB_TENANT_USER, DB_TENANT_PASSWORD, {
     host: DB_HOST,
     dialect: 'postgres',
     pool: {
@@ -29,6 +29,9 @@ export const connectToDatabase = async (tenantId: string | 'admin') => {
         max: 5,
       }
     });
+    sequelize.query(
+      `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "${DB_TENANT_USER}";`
+    );
   }
 
   sequelize.addModels([...Object.values(allModels)])

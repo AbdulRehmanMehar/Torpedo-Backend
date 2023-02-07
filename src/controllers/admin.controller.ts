@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
 import { Body, Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
-import auth0, { createAdmin, updateUserMeta } from '../config/auth0';
+import auth0, { createAdmin, createUser, updateUserMeta } from '../config/auth0';
 import { adminSchema, tenantSchema } from '../validators';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
 import { connectToDatabase } from '../config/db';
@@ -103,6 +103,71 @@ export class AdminController {
 
       return response.status(200).json({
         tenant
+      });
+    } catch (error) {
+      console.log({ error });
+
+      return response.status(500).json({
+        message: 'Something went wrong',
+        error
+      });
+    }
+  }
+
+  @UseBefore(Auth0Middleware)
+  @Post('/create/tenant-user')
+  async createTenantUser(@Body() userInfo: any, @Req() request: Request & {auth: any}, @Res() response: Response) {
+    try {
+      const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
+
+      if (!userId)
+        return response.status(400).json({
+          message: 'Something went wrong',
+        });
+
+      const { value, error } = adminSchema.validate(userInfo);
+      if (error) return response.status(400).json({ error });
+
+      const { User } = await connectToDatabase(tenantId);
+
+      let user = await User.findByPk(userId);
+
+      if (!user.tenantId) 
+        return response.status(400).json({
+          message: 'Please create a tenant first',
+        });
+
+
+      const { name, email, password } = value;
+
+      user = await User.findOne({
+        where: { email }
+      });
+
+      if (user)
+        return response.status(400).json({
+          message: 'User already exists',
+          user,
+        });
+
+      user = await User.create({
+        name,
+        email,
+        tenantId
+      });
+
+      const resp = await createUser({
+        name,
+        email,
+        password,
+        id: user.id,
+        encKey,
+        tenantId,
+      });
+
+      return response.status(200).json({
+        resp,
+        user,
       });
     } catch (error) {
       console.log({ error });

@@ -53,8 +53,11 @@ export const createUser = async (userInfo: Auth0User) => {
   return managementClient.createUser({
     name: userInfo.name,
     email: userInfo.email,
+    password: userInfo.password,
     user_metadata: {
       tenantId: userInfo.tenantId,
+      encKey: userInfo.encKey,
+      userId: userInfo.id
     },
     connection: AUTH0_CONNECTION,
   });
