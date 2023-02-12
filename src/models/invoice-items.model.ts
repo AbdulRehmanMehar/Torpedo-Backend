@@ -1,4 +1,5 @@
 import { Table, Column, Model, HasMany, DataType, PrimaryKey, ForeignKey, BelongsTo, Unique, HasOne } from 'sequelize-typescript';
+import { Invoice } from './invoice.model';
 import { Product } from './product.model';
 import { Tenant } from './tenant.model';
 
@@ -9,7 +10,8 @@ import { Tenant } from './tenant.model';
 export class InvoiceItem extends Model {
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 
@@ -25,13 +27,25 @@ export class InvoiceItem extends Model {
   })
   productId: string;
 
-  @Column
-  price: string; // sell price
 
-  @HasOne(() => Product, 'id')
+  @ForeignKey(() => Invoice)
+  @Column({
+    type: DataType.UUID
+  })
+  invoiceId: string;
+
+  @Column
+  price: number; // sell price
+
+  @Column
+  quantity: number; // sell price
+
+  @BelongsTo(() => Product)
   product: Product;
 
-  @HasOne(() => Tenant, 'id')
+  @BelongsTo(() => Tenant)
   tenant: Tenant;
 
+  @BelongsTo(() => Invoice)
+  invoice: Invoice;
 }

@@ -13,16 +13,21 @@ export class InvoicesController {
   async getInvoices(@Req() request: any, @Res() response: Response) {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
-      const { Invoice, Payment } = await connectToDatabase(tenantId);
+      const { Invoice, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
 
       const invoices = await Invoice.findAll({
-        include: [Payment]
+        include: [Payment, {
+          model: InvoiceItem,
+          include: [Product]
+        }]
       });
 
       return response.json({
         invoices
       });
     } catch (error) {
+      console.log(error);
+      
       return response.status(500).json({
         message: 'Something went wrong',
         error
@@ -40,10 +45,10 @@ export class InvoicesController {
       if (error) return response.status(400).json({ error });
 
       const {
-        customerPhone,
         netPayable,
         payments,
-        products
+        products,
+        customer: { phone: customerPhone, name: customerName },
       } = value;
 
       let customer = await Customer.findOne({
@@ -53,10 +58,11 @@ export class InvoicesController {
       });
 
       if (!customer) {
-        return response.status(400).json({
-          message: 'Customer doesn\'t exist',
-          error
-        });
+        customer = await Customer.create({
+          name: customerName,
+          phone: customerPhone,
+          tenantId,
+        }, { returning: true });
       }
 
       const invoice = await Invoice.create({
@@ -77,25 +83,24 @@ export class InvoicesController {
 
       const paymentList = await Promise.all(
         payments.map( ({ paymentType, amount }: any) => Payment.create({
-          id: uuidV4(),
           paymentType,
           amount,
-          invoiceId: invoice.id
+          invoiceId: invoice.id,
+          tenantId
         }))
       );
-
-      await invoice.$set('payments', [...paymentList]);
-      await invoice.$set('invoiceItems', [...paymentList]);
-      await invoice.$set('customer', customer);
 
       return response.status(200).json({
         invoice: {
           ...(invoice.get({ plain: true })),
           payments: paymentList,
-          invoiceItems,
+          products: invoiceItems,
+          customer,
         }
       });
     } catch (error) {
+      console.log(error);
+
       return response.status(500).json({
         message: 'Something went wrong',
         error

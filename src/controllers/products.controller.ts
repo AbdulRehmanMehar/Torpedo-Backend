@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 import { productSchema, productUpdateSchema } from '../validators';
 import { connectToDatabase } from '../config/db';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
-import { Body, Controller, Delete, Get, Post, Put, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
+import { Body, Controller, Delete, Get, Param, Post, Put, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 
 @UseBefore(Auth0Middleware)
 @Controller('/products')
@@ -19,6 +19,8 @@ export class ProductsController {
         products
       });
     } catch (error) {
+      console.log(error);
+
       return response.status(500).json({
         message: 'Something went wrong',
         error
@@ -72,8 +74,12 @@ export class ProductsController {
   }
 
   @Put('/update/:productId')
-  async updateProduct(@QueryParam('productId') productId: string, @Body() productData: any, @Req() request: any, @Res() response: Response) {
+  async updateProduct(@Param('productId') productId: string, @Body() productData: any, @Req() request: any, @Res() response: Response) {
     try {
+
+      if (!productId)
+        return response.status(400).json({ error: 'Product Id was not provided' });
+
       const { value, error } = productUpdateSchema.validate(productData);
       if (error) return response.status(400).json({ error });
 
@@ -104,7 +110,8 @@ export class ProductsController {
       }, {
         where: {
           id: productId
-        }
+        },
+        returning: true
       });
 
       return response.status(200).json({
@@ -121,8 +128,11 @@ export class ProductsController {
   }
 
   @Delete('/delete/:productId')
-  async deleteProduct(@QueryParam('productId') productId: string, @Req() request: any, @Res() response: Response) {
+  async deleteProduct(@Param('productId') productId: string, @Req() request: any, @Res() response: Response) {
     try {
+      if (!productId)
+        return response.status(400).json({ error: 'Product Id was not provided' });
+
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
       const { Product } = await connectToDatabase(tenantId);
 

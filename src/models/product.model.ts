@@ -1,4 +1,5 @@
 import { Table, Column, Model, HasMany, DataType, PrimaryKey, ForeignKey, BelongsTo, Unique, IsNull, HasOne } from 'sequelize-typescript';
+import { InvoiceItem } from './invoice-items.model';
 import { Tenant } from './tenant.model';
 
 @Table({

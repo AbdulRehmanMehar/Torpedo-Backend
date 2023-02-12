@@ -3,7 +3,10 @@ import messages from '../config/messages';
 import { PAYMENT_TYPES } from '../config/constants';
 
 export const invoiceSchema = Joi.object({
-  customerId: Joi.string().guid().required(),
+  customer: Joi.object({
+    name: Joi.string().required(),
+    phone: Joi.string().required(),
+  }),
   products: Joi.array().items({
     id: Joi.string().guid().required(),
     price: Joi.number().required(),
