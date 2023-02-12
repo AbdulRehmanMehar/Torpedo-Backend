@@ -17,6 +17,18 @@ export class Product extends Model {
   @Column
   name: string;
 
+  @Column
+  type: 'Tile' | 'Others';
+
+  @Column
+  brand: string;
+
+  @Column
+  quality: string;
+
+  @Column
+  quantity: number;
+
   @Column({
     type: DataType.DOUBLE
   })

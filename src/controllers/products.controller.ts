@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import { productSchema } from '../validators';
+import { productSchema, productUpdateSchema } from '../validators';
 import { connectToDatabase } from '../config/db';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
 import { Body, Controller, Delete, Get, Post, Put, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
@@ -13,9 +13,7 @@ export class ProductsController {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
       const { Product } = await connectToDatabase(tenantId);
-      const products = await Product.findAll({
-        attributes: ['id', 'name', 'price', 'width', 'height']
-      });
+      const products = await Product.findAll();
 
       return response.json({
         products
@@ -39,6 +37,10 @@ export class ProductsController {
         price,
         width,
         height,
+        type,
+        brand,
+        quality,
+        quantity
       } = value;
 
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
@@ -49,7 +51,11 @@ export class ProductsController {
         price,
         width,
         height,
-        tenantId: null
+        tenantId,
+        type,
+        quality,
+        quantity,
+        brand
       });
 
       return response.status(200).json({
@@ -68,7 +74,7 @@ export class ProductsController {
   @Put('/update/:productId')
   async updateProduct(@QueryParam('productId') productId: string, @Body() productData: any, @Req() request: any, @Res() response: Response) {
     try {
-      const { value, error } = productSchema.validate(productData);
+      const { value, error } = productUpdateSchema.validate(productData);
       if (error) return response.status(400).json({ error });
 
       const {
@@ -76,6 +82,10 @@ export class ProductsController {
         price,
         width,
         height,
+        type,
+        brand,
+        quality,
+        quantity
       } = value;
 
       const { tenantId } = request.auth.currentUser.user_metadata;
@@ -86,7 +96,11 @@ export class ProductsController {
         price,
         width,
         height,
-        tenantId: null
+        tenantId,
+        type,
+        quality,
+        quantity,
+        brand
       }, {
         where: {
           id: productId
@@ -111,7 +125,7 @@ export class ProductsController {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
       const { Product } = await connectToDatabase(tenantId);
-      
+
       await Product.destroy({
         where: {
           id: productId,

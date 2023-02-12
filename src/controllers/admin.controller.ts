@@ -132,7 +132,7 @@ export class AdminController {
 
       let user = await User.findByPk(userId);
 
-      if (!user.tenantId) 
+      if (!user.tenantId)
         return response.status(400).json({
           message: 'Please create a tenant first',
         });
