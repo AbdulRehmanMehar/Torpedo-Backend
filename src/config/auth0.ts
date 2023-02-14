@@ -98,6 +98,12 @@ export const generateToken = async (userInfo: Omit<Auth0User, 'name'>) => {
   });
 }
 
+export const getUserByEmail = async(email: string) => {
+  const user = (await managementClient.getUsersByEmail(email))[0];
+  if (!user || (user || {}).email !== email) throw new Error('Something went wrong.');
+  return user;
+}
+
 export const getUserById = async (id: string) => {
   return managementClient.getUser({ id });
 }
