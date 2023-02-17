@@ -45,8 +45,22 @@ export class IndexController {
   @UseBefore(Auth0Middleware)
   async getSuggestions(@Req() request: any, @Res() response: Response) {
     const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
-    const { Invoice, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
+    const { Invoice, Payment, InvoiceItem, Product, Sequelize, sequelize } = await connectToDatabase(tenantId);
     
-    return response.send('Application is live...');
+    const [distinctProductValues] = await sequelize.query(`
+      SELECT 
+      ARRAY(SELECT DISTINCT("products"."brand") FROM "products" WHERE "products"."brand" IS NOT NULL) AS "brand",
+      ARRAY(SELECT DISTINCT("products"."name") FROM "products" WHERE "products"."name" IS NOT NULL) AS "name",
+      ARRAY(SELECT DISTINCT("products"."width") FROM "products" WHERE "products"."width" IS NOT NULL) AS "width",
+      ARRAY(SELECT DISTINCT("products"."height") FROM "products" WHERE "products"."height" IS NOT NULL) AS "height",
+      ARRAY(SELECT DISTINCT("products"."quantity") FROM "products" WHERE "products"."quantity" IS NOT NULL) AS "quantity",
+      ARRAY(SELECT DISTINCT("products"."price") FROM "products" WHERE "products"."price" IS NOT NULL) AS "price";
+    `, { raw: true });
+
+
+    return response.json({
+      products: distinctProductValues[0],
+      invoices: {}
+    });
   }
 }
