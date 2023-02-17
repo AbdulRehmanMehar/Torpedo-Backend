@@ -1,9 +1,10 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
 import { Invoice } from '../models';
-import { Body, Controller, Get, Post, Req, Res } from 'routing-controllers';
+import { Body, Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { generateToken, getUserByEmail } from '../config/auth0';
 import { connectToDatabase } from '../config/db';
+import { Auth0Middleware } from '../middlewares';
 
 @Controller()
 export class IndexController {
@@ -40,4 +41,12 @@ export class IndexController {
     }
   }
 
+  @Get('/suggestions')
+  @UseBefore(Auth0Middleware)
+  async getSuggestions(@Req() request: any, @Res() response: Response) {
+    const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
+    const { Invoice, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
+    
+    return response.send('Application is live...');
+  }
 }
