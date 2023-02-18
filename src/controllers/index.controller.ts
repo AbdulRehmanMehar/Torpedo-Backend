@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import { v4 as uuidV4 } from 'uuid';
-import { Invoice } from '../models';
 import { Body, Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { generateToken, getUserByEmail } from '../config/auth0';
 import { connectToDatabase } from '../config/db';
@@ -44,23 +43,51 @@ export class IndexController {
   @Get('/suggestions')
   @UseBefore(Auth0Middleware)
   async getSuggestions(@Req() request: any, @Res() response: Response) {
-    const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
-    const { Invoice, Payment, InvoiceItem, Product, Sequelize, sequelize } = await connectToDatabase(tenantId);
-    
-    const [distinctProductValues] = await sequelize.query(`
-      SELECT 
-      ARRAY(SELECT DISTINCT("products"."brand") FROM "products" WHERE "products"."brand" IS NOT NULL) AS "brand",
-      ARRAY(SELECT DISTINCT("products"."name") FROM "products" WHERE "products"."name" IS NOT NULL) AS "name",
-      ARRAY(SELECT DISTINCT("products"."width") FROM "products" WHERE "products"."width" IS NOT NULL) AS "width",
-      ARRAY(SELECT DISTINCT("products"."height") FROM "products" WHERE "products"."height" IS NOT NULL) AS "height",
-      ARRAY(SELECT DISTINCT("products"."quantity") FROM "products" WHERE "products"."quantity" IS NOT NULL) AS "quantity",
-      ARRAY(SELECT DISTINCT("products"."price") FROM "products" WHERE "products"."price" IS NOT NULL) AS "price";
-    `, { raw: true });
+    try{
+      const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
+      const { Invoice, Payment, Customer, Product, Sequelize, sequelize } = await connectToDatabase(tenantId);
+      
+      const [distinctProductValues] = await sequelize.query(`
+        SELECT 
+        ARRAY(SELECT DISTINCT("products"."brand") FROM "products" WHERE "products"."brand" IS NOT NULL) AS "brand",
+        ARRAY(SELECT DISTINCT("products"."name") FROM "products" WHERE "products"."name" IS NOT NULL) AS "name",
+        ARRAY(SELECT DISTINCT("products"."width") FROM "products" WHERE "products"."width" IS NOT NULL) AS "width",
+        ARRAY(SELECT DISTINCT("products"."height") FROM "products" WHERE "products"."height" IS NOT NULL) AS "height",
+        ARRAY(SELECT DISTINCT("products"."quantity") FROM "products" WHERE "products"."quantity" IS NOT NULL) AS "quantity",
+        ARRAY(SELECT DISTINCT("products"."price") FROM "products" WHERE "products"."price" IS NOT NULL) AS "price";
+      `, { raw: true });
 
 
-    return response.json({
-      products: distinctProductValues[0],
-      invoices: {}
-    });
+      const invoiceProductsAll = await Product.findAll({
+        attributes: [
+          'id', 
+          'price',
+          [sequelize.literal(`(
+            CASE WHEN "type" = 'Tile' THEN
+              CONCAT("brand", ' - ', "name", ' - ', "price", ' PKR - ', "quantity", ' Unit(s) - ', "width", 'x', "height")
+            ELSE 
+              CONCAT("brand", ' - ', "name", ' - ', "price", ' PKR - ', "quantity", ' Unit(s) - ', "quality")
+            END
+          )`), 'title']
+        ]
+      });
+
+      const invoiceCustomersAll = await Customer.findAll({
+        attributes: ['id', 'name', 'phone']
+      });
+
+      return response.json({
+        products: distinctProductValues[0],
+        invoices: {
+          products: invoiceProductsAll,
+          customers: invoiceCustomersAll,
+        }
+      });
+    } catch (error) {
+      return response.status(500).json({
+        message: 'Something went wrong',
+        error
+      });
+    }
   }
 }
