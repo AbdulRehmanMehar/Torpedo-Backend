@@ -130,7 +130,7 @@ export class ProductsController {
         price: price || product.price,
         width: type === 'Tile' ? width || product.width : null,
         height: type === 'Tile' ? height || product.height : null,
-        type: type,
+        type,
         brand: brand || product.brand,
         quality: type !== 'Tile' ? quality || product.quality: null,
         quantity: quantity || product.quantity,

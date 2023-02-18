@@ -19,7 +19,7 @@ export class IndexController {
     try {
       const { access_token: token } = await generateToken({ email: userInfo.email, password: userInfo.password });
       const user = await getUserByEmail(userInfo.email);
-      
+
       let tenant;
       if (user) {
         const { Tenant } = await connectToDatabase('admin');
@@ -46,9 +46,9 @@ export class IndexController {
     try{
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
       const { Invoice, Payment, Customer, Product, Sequelize, sequelize } = await connectToDatabase(tenantId);
-      
+
       const [distinctProductValues] = await sequelize.query(`
-        SELECT 
+        SELECT
         ARRAY(SELECT DISTINCT("products"."brand") FROM "products" WHERE "products"."brand" IS NOT NULL) AS "brand",
         ARRAY(SELECT DISTINCT("products"."name") FROM "products" WHERE "products"."name" IS NOT NULL) AS "name",
         ARRAY(SELECT DISTINCT("products"."width") FROM "products" WHERE "products"."width" IS NOT NULL) AS "width",
@@ -60,12 +60,12 @@ export class IndexController {
 
       const invoiceProductsAll = await Product.findAll({
         attributes: [
-          'id', 
+          'id',
           'price',
           [sequelize.literal(`(
             CASE WHEN "type" = 'Tile' THEN
               CONCAT("brand", ' - ', "name", ' - ', "price", ' PKR - ', "quantity", ' Unit(s) - ', "width", 'x', "height")
-            ELSE 
+            ELSE
               CONCAT("brand", ' - ', "name", ' - ', "price", ' PKR - ', "quantity", ' Unit(s) - ', "quality")
             END
           )`), 'title']

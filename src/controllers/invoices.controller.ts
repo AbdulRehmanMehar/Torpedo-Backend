@@ -28,7 +28,7 @@ export class InvoicesController {
       });
     } catch (error) {
       console.log(error);
-      
+
       return response.status(500).json({
         message: 'Something went wrong',
         error
