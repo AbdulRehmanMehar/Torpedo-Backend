@@ -4,6 +4,7 @@ import { invoiceSchema } from '../validators';
 import { connectToDatabase } from '../config/db';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
 import { Body, Controller, Get, Middleware, Post, Req, Res, UseBefore } from 'routing-controllers';
+import { ModelStatic } from 'sequelize';
 
 @UseBefore(Auth0Middleware)
 @Controller('/invoices')
@@ -39,7 +40,7 @@ export class InvoicesController {
   async addInvoice(@Body() invoiceData: any, @Req() request: any, @Res() response: Response) {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
-      const { Invoice, Payment, Customer, InvoiceItem } = await connectToDatabase(tenantId);
+      const { Invoice, Payment, Customer, InvoiceItem, Product } = await connectToDatabase(tenantId);
 
       const { value, error } = invoiceSchema.validate(invoiceData);
       if (error) return response.status(400).json({ error });
@@ -71,12 +72,17 @@ export class InvoicesController {
         tenantId,
       });
 
+      const productsObj = await Promise.all(products.map((product: any) => (
+        Product.findByPk(product.id)
+      )));
+
       const invoiceItems = await Promise.all(products.map((product: any) => (
         InvoiceItem.create({
           productId: product.id,
           price: product.price,
           quantity: product.quantity,
           invoiceId: invoice.id,
+          defaultProductPrice: productsObj.find((prod) => prod.id === product.id).price,
           tenantId,
         })
       )));
