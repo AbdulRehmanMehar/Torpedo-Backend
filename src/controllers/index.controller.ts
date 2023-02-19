@@ -62,6 +62,10 @@ export class IndexController {
         attributes: [
           'id',
           'price',
+          'width',
+          'height',
+          'quality',
+          'quantity',
           [sequelize.literal(`(
             CASE WHEN "type" = 'Tile' THEN
               CONCAT("brand", ' - ', "name", ' - ', "price", ' PKR - ', "quantity", ' Unit(s) - ', "width", 'x', "height")
