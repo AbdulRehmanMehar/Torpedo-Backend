@@ -65,6 +65,7 @@ export class IndexController {
           'width',
           'height',
           'quality',
+          'type',
           'quantity',
           [sequelize.literal(`(
             CASE WHEN "type" = 'Tile' THEN
