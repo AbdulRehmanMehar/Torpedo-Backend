@@ -15,10 +15,10 @@ export class InvoicesController {
   async getInvoices(@QueryParam('pageNumber') pageNumber: number, @Req() request: any, @Res() response: Response) {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
-      const { Invoice, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
+      const { Invoice, Customer, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
 
       const queryReponse = await Invoice.findAndCountAll({
-        include: [Payment, {
+        include: [Payment, Customer, {
           model: InvoiceItem,
           include: [Product]
         }],
