@@ -73,8 +73,11 @@ export class InvoicesController {
       });
 
       const productsObj = await Promise.all(products.map((product: any) => (
-        Product.findByPk(product.id)
+        Product.findByPk(product.id, { raw: true })
       )));
+
+      console.log({ productsObj });
+      
 
       const invoiceItems = await Promise.all(products.map((product: any) => (
         InvoiceItem.create({
@@ -82,7 +85,7 @@ export class InvoicesController {
           price: product.price,
           quantity: product.quantity,
           invoiceId: invoice.id,
-          defaultProductPrice: productsObj.find((prod) => prod.id === product.id).price,
+          defaultProductPrice: `${(productsObj.find((prod) => prod.id === product.id) || {}).price || ' '} `,
           tenantId,
         })
       )));

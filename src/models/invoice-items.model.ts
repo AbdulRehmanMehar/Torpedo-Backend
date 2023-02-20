@@ -38,6 +38,9 @@ export class InvoiceItem extends Model {
   price: number; // sell price
 
   @Column
+  defaultProductPrice: number; // purchase price
+
+  @Column
   quantity: number; // sell price
 
   @BelongsTo(() => Product)
