@@ -3,28 +3,33 @@ import { v4 as uuidV4 } from 'uuid';
 import { invoiceSchema } from '../validators';
 import { connectToDatabase } from '../config/db';
 import { Auth0Middleware } from '../middlewares/auth0.middleware';
-import { Body, Controller, Get, Middleware, Post, Req, Res, UseBefore } from 'routing-controllers';
+import { Body, Controller, Get, Middleware, Post, QueryParam, Req, Res, UseBefore } from 'routing-controllers';
 import { ModelStatic } from 'sequelize';
+import { PAGINATION_LIMIT } from '../config/constants';
 
 @UseBefore(Auth0Middleware)
 @Controller('/invoices')
 export class InvoicesController {
 
   @Get('/')
-  async getInvoices(@Req() request: any, @Res() response: Response) {
+  async getInvoices(@QueryParam('pageNumber') pageNumber: number, @Req() request: any, @Res() response: Response) {
     try {
       const { userId, encKey, tenantId } = request.auth.currentUser.user_metadata;
       const { Invoice, Payment, InvoiceItem, Product } = await connectToDatabase(tenantId);
 
-      const invoices = await Invoice.findAll({
+      const queryReponse = await Invoice.findAndCountAll({
         include: [Payment, {
           model: InvoiceItem,
           include: [Product]
-        }]
+        }],
+        limit: PAGINATION_LIMIT,
+        offset: PAGINATION_LIMIT * ((pageNumber || 1) -1),
+        order: [['updatedAt', 'DESC']]
       });
 
       return response.json({
-        invoices
+        invoices: queryReponse.rows,
+        total: queryReponse.count,
       });
     } catch (error) {
       console.log(error);
