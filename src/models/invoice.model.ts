@@ -1,4 +1,6 @@
 import { Table, Column, Model, HasMany, DataType, PrimaryKey, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Customer } from './customer.model';
+import { InvoiceItem } from './invoice-items.model';
 import { Payment } from './payments.modal';
 import { Tenant } from './tenant.model';
 
@@ -9,27 +11,16 @@ import { Tenant } from './tenant.model';
 export class Invoice extends Model {
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 
-  @Column
-  customerName: string;
-
-  @Column
-  customerPhone: string;
-
-  @Column
-  productName: string;
-
-  @Column
-  productQuantity: number;
-
-  @Column
-  productPrice: number;
-
-  @Column
-  productMeasurements: string;
+  @ForeignKey(() => Customer)
+  @Column({
+    type: DataType.UUID
+  })
+  customerId: string;
 
   @Column
   netPayable: number;
@@ -45,4 +36,10 @@ export class Invoice extends Model {
 
   @HasMany(() => Payment)
   payments: Payment[];
+
+  @BelongsTo(() => Customer)
+  customer: Customer;
+
+  @HasMany(() => InvoiceItem)
+  invoiceItems: InvoiceItem[];
 }

@@ -1,6 +1,7 @@
-import { Table, Column, Model, HasMany, DataType, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, HasMany, DataType, PrimaryKey, BelongsTo, ForeignKey, HasOne } from 'sequelize-typescript';
 import { Invoice } from './invoice.model';
 import { Payment } from './payments.modal';
+import { User } from './user.model';
 
 @Table({
   timestamps: true,
@@ -10,16 +11,23 @@ export class Tenant extends Model {
 
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 
-  @Column
+  @Column({
+    type: DataType.STRING,
+    unique: true,
+  })
   name: string;
 
-  @HasMany(() => Invoice)
-  invoices: Invoice[];
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID
+  })
+  adminId: string;
 
-  @HasMany(() => Payment)
-  payments: Payment[];
+  @HasOne(() => User, 'id')
+  admin: User;
 }

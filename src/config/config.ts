@@ -18,37 +18,22 @@ const config: any = {
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: false
-      }
-    }
+    dialect: 'postgres',
   },
   test: {
     username: DB_ADMIN_USER,
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: false
-      }
-    }
+    dialect: 'postgres',
   },
   production: {
     username: DB_ADMIN_USER,
     password: DB_ADMIN_PASSWORD,
     database: DB_NAME,
     host: DB_HOST,
-    dialect: 'mysql',
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: false
-      }
-    }
-  }
+    dialect: 'postgres',
+  },
 }
 
 const data = JSON.stringify(config);

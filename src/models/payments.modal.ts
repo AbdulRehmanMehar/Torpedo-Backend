@@ -10,12 +10,13 @@ export class Payment extends Model {
 
   @PrimaryKey
   @Column({
-    type: DataType.UUID
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
   })
   id: string;
 
   @Column
-  paymentType: string;
+  paymentType: 'Debt' | 'Credit' | 'Cash';
 
   @Column
   amount: number;
